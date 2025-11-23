@@ -1,0 +1,155 @@
+//
+// Theme style
+//
+
+// Initialize
+@import "init";
+
+// Components
+@import "./core/components/components";
+@import "components/components";
+
+// Layout
+@import "./core/layout/base/layout";
+@import "layout/layout";
+
+.arable_column_first {
+	max-width: 108px;
+	min-width: 108px;
+}
+
+.btn-theme {
+	background-color: #ffc800 !important;
+	color: #000000 !important;
+}
+
+.btn-theme:hover {
+	background-color: #444444 !important;
+	color: #fff !important;
+}
+
+.bg-theme {
+	background-color: #d9d9c3 !important;
+}
+
+.tick-success {
+	color: #ffc800;
+}
+
+.text-active-primary.active {
+	color: #444 !important;
+}
+
+.nav-line-tabs .nav-item .nav-link.active,
+.nav-line-tabs .nav-item.show .nav-link,
+.nav-line-tabs .nav-item .nav-link:hover:not(.disabled) {
+	border-bottom: 2px solid #ffc800;
+}
+
+.upload-btn-wrapper {
+	position: relative;
+	overflow: hidden;
+	display: inline-block;
+}
+
+.upload-btn-wrapper input[type="file"] {
+	font-size: 100px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	opacity: 0;
+	min-width: 170px;
+}
+
+.excel-upload {
+	border: dashed 1px #92929c;
+	// background-color: #7183c9;
+	padding: 20px;
+	margin-top: 15px;
+}
+
+.link-primary {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.sdd-yellow {
+	color: #ffc800;
+}
+
+.sdd-gray {
+	color: #d9d9c3;
+}
+
+.sdd-gray-bg {
+	background-color: #d9d9c3;
+}
+
+.info-panel {
+	background-color: #fff;
+	/* Light background to distinguish it from the form */
+	border-left: 4px solid $primary;
+	/* Accent border to highlight the panel */
+	padding: 15px 20px;
+	margin-bottom: 20px;
+	border-radius: 4px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	/* Subtle shadow for depth */
+}
+
+.info-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+info-icon {
+	font-size: 1.5em;
+	color: $primary;
+	/* Match the accent color */
+	margin-left: 10px;
+}
+
+// .info-description {
+//     font-size: 1em;
+//     color: #666;
+//     margin-bottom: 10px;
+// }
+
+.info-tips {
+	margin: 0;
+	padding-left: 20px;
+	/* Indent list items */
+	list-style-type: disc;
+	/* Use bullet points for tips */
+}
+
+.info-tips li {
+	//font-size: 0.9em;
+	//color: #555;
+	margin-bottom: 5px;
+	line-height: 2;
+}
+
+.custom-tabs .custom-tab-title {
+	font-weight: bold;
+	color: #4B5675;
+	/* Custom color */
+	font-size: 1.1rem;
+	/* Adjust font size */
+	// text-transform: uppercase;
+	/* Optional for uppercase text */
+}
+
+.custom-tabs .custom-tab-title:hover {
+	color: #003f7f;
+	/* Darker color on hover */
+	text-decoration: underline;
+	/* Optional underline on hover */
+}
+
+.custom-tabs .nav-link.active .custom-tab-title {
+	padding-bottom: 10px;
+	border-bottom: solid 2px #ffc800;
+	/* Active tab color */
+}

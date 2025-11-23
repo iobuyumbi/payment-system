@@ -1,0 +1,12 @@
+/* toast-custom.css */
+
+/* Override the close button color */
+.Toastify__close-button {
+  color: black !important;
+  opacity: 1;
+}
+
+/* Optional: hover effect */
+.Toastify__close-button:hover {
+  color: black !important;
+}

@@ -1,0 +1,9 @@
+
+//
+// Col form label
+//
+
+.col-form-label {
+	@include font-size($form-label-font-size);
+	padding-bottom: calc(0.500rem + 1px);
+}

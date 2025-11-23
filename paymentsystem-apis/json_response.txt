@@ -1,0 +1,42 @@
+{
+	"id": 11717010,
+	"organization": 17237,
+	"amount": "100.20",
+	"currency": "BXC",
+	"request_currency": null,
+	"account": 2953537,
+	"payment_type": "money",
+	"metadata": {
+		"id": "1234",
+		"name": "Lucy"
+	},
+	"description": "Per diem payment",
+	"phone_nos": [
+		{
+			"contact": "8730214",
+			"amount": "100.2000",
+			"description": "Per diem payment",
+			"metadata": null,
+			"phonenumber": "+80000000001"
+		}
+	],
+	"state": "new",
+	"remote_transaction_id": null,
+	"last_error": "",
+	"rejected_reason": null,
+	"rejected_by": null,
+	"rejected_time": null,
+	"cancelled_reason": null,
+	"cancelled_by": null,
+	"cancelled_time": null,
+	"created": "2024-12-04T11:25:07.269645Z",
+	"author": 134,
+	"modified": "2024-12-04T11:25:07.269726Z",
+	"updated_by": 134,
+	"start_date": "2024-12-04T11:25:07.205947Z",
+	"transactions": [],
+	"send_sms_message": false,
+	"charged_fee": 0,
+	"payment_fx_details": null,
+	"amount_in_send_currency": false
+}

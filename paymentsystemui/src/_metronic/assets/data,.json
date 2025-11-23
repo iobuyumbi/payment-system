@@ -1,0 +1,39 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "gender": "Male",
+            "salary": 50000
+        },
+        {
+            "id": 2,
+            "gender": "Female",
+            "salary": 60000
+        },
+        {
+            "id": 3,
+            "gender": "Robot",
+            "salary": 70000
+        },
+        {
+            "id": 5,
+            "gender": "Male",
+            "salary": 110000
+        },
+        {
+            "id": 5,
+            "gender": "Female",
+            "salary": 120000
+        },
+        {
+            "id": 6,
+            "gender": "Robot",
+            "salary": 130000
+        },
+        {
+            "id": 7,
+            "gender": "Male",
+            "salary": 140000
+        }
+    ]
+}

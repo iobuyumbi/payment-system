@@ -1,0 +1,80 @@
+#commonTable {
+
+    .sortIconWrapper,
+    .icon-text {
+        position: relative;
+        display: flex;
+    }
+
+    .icon {
+        display: none;
+        position: absolute;
+        right: -15px;
+        top: -2px;
+    }
+
+    .sortIconWrapper:hover .icon,
+    .icon.open {
+        display: block;
+    }
+}
+
+.filter-button {
+    background-color: #FFFFFF !important;
+    border-radius: 50px !important;
+    border: 1px solid #28a745 !important;
+}
+
+.selected-inprogress,
+.selected-Nostarted,
+.selected-complete {
+    background-color: rgba(201, 252, 216, 0.24) !important;
+    border: 3px solid #05dc31 !important;
+}
+
+.algn-mdl {
+    align-items: center !important;
+}
+
+.bgColorWhite {
+    background-color: #FFFFFF !important;
+}
+
+.borderTransparent {
+    border: 0px solid #FFFFFF !important;
+    box-shadow: rgb(0 0 0) 0px 0px 0px 0px inset !important;
+}
+
+.maxWidth {
+    max-width: 175px !important;
+}
+
+.editmultiple_delete_button {
+    display: flex;
+    margin-right: 21px !important;
+}
+
+.fitContent {
+    min-width: fit-content !important;
+}
+
+.extra_selected_items {
+    background: #d4eefa;
+    border-radius: 4px;
+    font-family: Overpass !important;
+    ;
+    padding: 3px;
+}
+
+.column_first {
+    text-align: left;
+}
+.table-header{
+    background: rgb(153, 161, 183, 0.25);
+}
+.th-header {
+    text-transform: uppercase;
+    color: #444; 
+    font-weight: 600;
+    text-align: left;
+}

@@ -1,0 +1,56 @@
+ Admin- basicuser 123Pa$$word!
+ Initiator- LoanManager Password123!
+ Reviewer- reviewer2@mail.com Password123!
+ Approver- approver@mail.com Password123!
+
+
+
+================================
+ Contacts API - Except Kenya
+================================
+To use the API:
+Add the keyword “sync” with a value of 1 or “1” to your contact metadata.
+Use the contact read API if a contact already exists and the contact creation API if it's a new contact.
+Verification is done instantly, so when the API call returns, you'll receive the validated data.
+Verified data will include the full names + scoring information even if there is no match with the one you provided.
+ 
+================================
+ Payments API - For Kenya
+================================
+
+Field: national_id
+Type: Integer
+Description: 8-digit Identity Number
+Field: national_id_type
+Type: String
+Description: ID type. Possible values are passport, national or military
+
+ ========
+ SUMMARY
+ ========
+If a user submits a right ID, the payment is processed successfully. If the user fails to submit the right ID, the payment will fail and a callback will be sent with the "last_error" field returning "Last Error: Aborted. - ID Number not match.",
+If the user retries with the same ID that failed, our backend will respond with the below error else the request will be sent to Safaricom to determine whether it is valid or not.
+ "non_field_errors": [
+        "National ID for contact +2547XXXXX does not match the ID recorded on the network. Either update the ID XXXXXX on the contacts page [admin can grant this permission] or select a different contact with a valid national ID"
+    ]
+	
+================================
+ Payments API - Issue
+================================	
+The payment that sent response as successfully, later failed the payment saying the amount sent was less than the allowed amount.
+
+Solution: To use the callback url?
+
+
+The possible "state" would be: 
+new, 
+processing, 
+pending_confirmation, 
+complete, 
+error, 
+paused, 
+parked, 
+paused_for_admin_action, 
+queued,
+ aborted.
+

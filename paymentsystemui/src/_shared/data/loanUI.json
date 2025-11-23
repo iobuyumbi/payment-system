@@ -1,0 +1,14 @@
+{
+    "data": [
+        {
+            "title": "Loan Products",
+            "description": "test description",
+            "link": "/loans/batches"
+        },
+        {
+            "title": "Loan Applications",
+            "description": "test description",
+            "link": "/loans/applications"
+        }
+    ]
+}
