@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -16,7 +16,7 @@ namespace Solidaridad.DataAccess.Migrations
                 table: "LoanBatchItem");
 
             migrationBuilder.DropTable(
-                name: "Seedlings");
+                name: "Seedling");
 
             migrationBuilder.DropColumn(
                 name: "Cost",

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,26 +10,27 @@ namespace Solidaridad.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-             migrationBuilder.CreateTable(
-                name: "LoanBatches",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    InitiatedBy = table.Column<Guid>(type: "uuid", nullable: false),
-                    InitiationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ClosedBy = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClosingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LoanBatches", x => x.Id);
-                });
-        
-
-           
+            // Table already exists from migration 20240729062055_loanBatches
+            // This migration should not recreate it - the table structure is already correct
+            // Only create if it doesn't exist (handles edge cases)
+            migrationBuilder.Sql(@"
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'LoanBatches') THEN
+                        CREATE TABLE ""LoanBatches"" (
+                            ""Id"" uuid NOT NULL,
+                            ""Name"" text,
+                            ""InitiatedBy"" uuid NOT NULL,
+                            ""InitiationDate"" timestamp with time zone NOT NULL,
+                            ""ClosedBy"" uuid NOT NULL,
+                            ""ClosingDate"" timestamp with time zone,
+                            ""ProjectId"" uuid NOT NULL,
+                            ""StatusId"" integer NOT NULL,
+                            CONSTRAINT ""PK_LoanBatches"" PRIMARY KEY (""Id"")
+                        );
+                    END IF;
+                END $$;
+            ");
         }
 
         /// <inheritdoc />

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -11,29 +11,26 @@ namespace Solidaridad.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<Guid>(
-                name: "RoleId",
-                table: "RolePermission",
-                type: "uuid",
-                maxLength: 36,
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "character varying(36)",
-                oldMaxLength: 36);
+            // PostgreSQL requires explicit USING clause for string to uuid conversion
+            // Since this is a fresh database with no data, convert empty strings to a default UUID
+            migrationBuilder.Sql(@"
+                ALTER TABLE ""RolePermission"" 
+                ALTER COLUMN ""RoleId"" TYPE uuid USING 
+                    CASE 
+                        WHEN ""RoleId"" = '' OR ""RoleId"" IS NULL THEN '00000000-0000-0000-0000-000000000000'::uuid
+                        ELSE (""RoleId"")::uuid
+                    END;
+            ");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "RoleId",
-                table: "RolePermission",
-                type: "character varying(36)",
-                maxLength: 36,
-                nullable: false,
-                oldClrType: typeof(Guid),
-                oldType: "uuid",
-                oldMaxLength: 36);
+            // Convert uuid back to string
+            migrationBuilder.Sql(@"
+                ALTER TABLE ""RolePermission"" 
+                ALTER COLUMN ""RoleId"" TYPE character varying(36) USING ""RoleId""::text;
+            ");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,30 +10,38 @@ namespace Solidaridad.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "AuditLog",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "character varying(36)", nullable: false),
-                    EntityType = table.Column<string>(type: "character varying(100)", nullable: false),
-                    EntityId = table.Column<string>(type: "character varying(36)", nullable: false),
-                    OldValue = table.Column<string>(type: "text", nullable: true),
-                    NewValue = table.Column<string>(type: "text", nullable: true),
-                    ChangedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ChangedBy = table.Column<string>(type: "character varying(36)", nullable: false),
-                    ChangeType = table.Column<string>(type: "character varying(50)", nullable: false),
-                    Field = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuditLog", x => x.Id);
-                });
+            migrationBuilder.Sql(@"
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'AuditLog') THEN
+                        CREATE TABLE ""AuditLog"" (
+                            ""Id"" character varying(36) NOT NULL,
+                            ""EntityType"" character varying(100) NOT NULL,
+                            ""EntityId"" character varying(36) NOT NULL,
+                            ""OldValue"" text NULL,
+                            ""NewValue"" text NULL,
+                            ""ChangedOn"" timestamp without time zone NOT NULL,
+                            ""ChangedBy"" character varying(36) NOT NULL,
+                            ""ChangeType"" character varying(50) NOT NULL,
+                            ""Field"" text NOT NULL,
+                            CONSTRAINT ""PK_AuditLog"" PRIMARY KEY (""Id"")
+                        );
+                    END IF;
+                END $$;
+            ");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.Sql(@"
+                DO $$
+                BEGIN
+                    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'AuditLog') THEN
+                        DROP TABLE ""AuditLog"";
+                    END IF;
+                END $$;
+            ");
         }
     }
 }

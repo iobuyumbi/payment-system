@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -11,6 +11,35 @@ namespace Solidaridad.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // First, convert text columns to uuid (nullable) before renaming
+            // PostgreSQL requires explicit USING clause for text to uuid conversion
+            // Since this is a fresh database with no data, we can set all to NULL
+            migrationBuilder.Sql(@"
+                ALTER TABLE ""Addresses"" 
+                ALTER COLUMN ""AdminLevel4"" TYPE uuid USING NULL;
+            ");
+
+            migrationBuilder.Sql(@"
+                ALTER TABLE ""Addresses"" 
+                ALTER COLUMN ""AdminLevel3"" TYPE uuid USING NULL;
+            ");
+
+            migrationBuilder.Sql(@"
+                ALTER TABLE ""Addresses"" 
+                ALTER COLUMN ""AdminLevel2"" TYPE uuid USING NULL;
+            ");
+
+            migrationBuilder.Sql(@"
+                ALTER TABLE ""Addresses"" 
+                ALTER COLUMN ""AdminLevel1"" TYPE uuid USING NULL;
+            ");
+
+            migrationBuilder.Sql(@"
+                ALTER TABLE ""Addresses"" 
+                ALTER COLUMN ""AdminLevel0"" TYPE uuid USING NULL;
+            ");
+
+            // Now rename the columns
             migrationBuilder.RenameColumn(
                 name: "AdminLevel4",
                 table: "Addresses",
@@ -259,6 +288,7 @@ namespace Solidaridad.DataAccess.Migrations
                 name: "AddressId",
                 table: "Projects");
 
+            // Rename columns back first
             migrationBuilder.RenameColumn(
                 name: "CountryId",
                 table: "Addresses",
@@ -283,6 +313,52 @@ namespace Solidaridad.DataAccess.Migrations
                 name: "AdminLevel1Id",
                 table: "Addresses",
                 newName: "AdminLevel0");
+
+            // Convert uuid columns back to text
+            migrationBuilder.AlterColumn<string>(
+                name: "AdminLevel4",
+                table: "Addresses",
+                type: "text",
+                nullable: true,
+                oldClrType: typeof(Guid),
+                oldType: "uuid",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "AdminLevel3",
+                table: "Addresses",
+                type: "text",
+                nullable: true,
+                oldClrType: typeof(Guid),
+                oldType: "uuid",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "AdminLevel2",
+                table: "Addresses",
+                type: "text",
+                nullable: true,
+                oldClrType: typeof(Guid),
+                oldType: "uuid",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "AdminLevel1",
+                table: "Addresses",
+                type: "text",
+                nullable: true,
+                oldClrType: typeof(Guid),
+                oldType: "uuid",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<string>(
+                name: "AdminLevel0",
+                table: "Addresses",
+                type: "text",
+                nullable: true,
+                oldClrType: typeof(Guid),
+                oldType: "uuid",
+                oldNullable: true);
         }
     }
 }

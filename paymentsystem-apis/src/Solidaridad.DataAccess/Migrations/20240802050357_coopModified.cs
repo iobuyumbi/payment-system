@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,6 +10,11 @@ namespace Solidaridad.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Rename table from "Cooperative" to "Cooperatives" to match DbSet name
+            migrationBuilder.RenameTable(
+                name: "Cooperative",
+                newName: "Cooperatives");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
                 table: "Cooperatives",
@@ -35,6 +40,11 @@ namespace Solidaridad.DataAccess.Migrations
                 oldType: "character varying(500)",
                 oldMaxLength: 500,
                 oldNullable: true);
+
+            // Rename table back from "Cooperatives" to "Cooperative"
+            migrationBuilder.RenameTable(
+                name: "Cooperatives",
+                newName: "Cooperative");
         }
     }
 }

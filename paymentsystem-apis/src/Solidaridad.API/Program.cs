@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using DotNetEnv;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Solidaridad.API;
 using Solidaridad.API.Extensions;
@@ -11,6 +12,23 @@ using Solidaridad.DataAccess.Persistence;
 using Quartz;
 using Solidaridad.Application.Services.Jobs;
 using QuestPDF.Infrastructure;
+
+// Load .env from solution root (paymentsystem-apis)
+// 1. Calculate the robust path to the .env file in the root directory (paymentsystem-apis)
+var currentDir = Directory.GetCurrentDirectory();
+var envPath = Path.Combine(currentDir, "..", "..", ".env");
+
+// 2. Load the .env file using the correct static class `Env`
+if (File.Exists(envPath))
+{
+    // Load() will set environment variables that ASP.NET Core can pick up immediately.
+    Env.Load(envPath);
+    Console.WriteLine($"[Config] Successfully loaded environment variables from: {envPath}");
+}
+else
+{
+    Console.WriteLine($"[Config] .env file not found at: {envPath}. Relying on system/appsettings configuration.");
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
