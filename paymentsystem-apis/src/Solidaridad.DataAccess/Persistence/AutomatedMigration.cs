@@ -19,6 +19,6 @@ public static class AutomatedMigration
         var loggerFactory = services.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger("app");
 
-        await DatabaseContextSeed.SeedDatabaseAsync(context, userManager, roleManager, logger);
+        await DatabaseContextSeed.SeedDatabaseAsync(context, userManager, roleManager);
     }
 }
