@@ -1,7 +1,6 @@
 
 import { FC } from 'react'
-import {Link} from 'react-router-dom'
-import {useLocation} from 'react-router'
+import {Link, useLocation} from 'react-router-dom'
 import { ToolbarWrapper } from '../../../_metronic/layout/components/toolbar'
 import { Content } from '../../../_metronic/layout/components/content'
 import { isAllowed } from '../../../_metronic/helpers/ApiUtil'

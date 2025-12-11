@@ -24,7 +24,7 @@ const SELECTED_COUNTRY_CODE_KEY = "selected_country_code";
 const CountryDropdown: React.FC = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCode, setSelectedCode] = useState(
-    () => getSelectedCountryCode() || "KES"
+    () => getSelectedCountryCode() || "KE"
   );
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -79,7 +79,7 @@ const CountryDropdown: React.FC = () => {
           (c: Country) => c.code === savedCode
         );
 
-        const codeToUse = isSavedCodeValid ? savedCode : defaultCode;
+        const codeToUse = isSavedCodeValid ? savedCode : defaultCode || "KE";
 
         setSelectedCode(codeToUse);
         setSelectedCountryCode(codeToUse); // Ensure it's stored if not already
@@ -129,13 +129,15 @@ const CountryDropdown: React.FC = () => {
       >
         <img
           src={toAbsoluteUrl(
-            `media/flags/${currentCountry?.countryName.toLowerCase()}.svg`
+            `media/flags/${
+              currentCountry?.countryName?.toLowerCase() || "kenya"
+            }.svg`
           )}
-          alt={currentCountry?.countryName}
+          alt={currentCountry?.countryName || "Kenya"}
           width="20"
           className="me-2"
         />
-        {currentCountry?.countryName}
+        {currentCountry?.countryName || "Kenya"}
       </button>
 
       {isOpen && (
@@ -155,9 +157,9 @@ const CountryDropdown: React.FC = () => {
               >
                 <img
                   src={toAbsoluteUrl(
-                    `media/flags/${c.countryName.toLowerCase()}.svg`
+                    `media/flags/${c.countryName?.toLowerCase() || "kenya"}.svg`
                   )}
-                  alt={c.countryName}
+                  alt={c.countryName || "Kenya"}
                   width="20"
                   className="me-2"
                 />

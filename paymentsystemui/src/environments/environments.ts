@@ -1,20 +1,19 @@
 const environments = [
     {
         "type": "Local",
-        "baseAPIUrl": "http://localhost:54180/"
+        "baseAPIUrl": "http://localhost:5000/"
     },
     {
         "type": "Development",
-        "baseAPIUrl": "https://devsddapi.ambervertex.com/"
-        
+        "baseAPIUrl": "http://localhost:5000/"
     },
     {
         "type": "Staging",
-        "baseAPIUrl": "https://apisdd.ambervertex.com/"
+        "baseAPIUrl": "http://localhost:5000/"
     },
     {
         "type": "Production",
-        "baseAPIUrl": "https://ecapay.solidaridadnetwork.org/api/"
+        "baseAPIUrl": "http://localhost:5000/"
     },
 ];
 

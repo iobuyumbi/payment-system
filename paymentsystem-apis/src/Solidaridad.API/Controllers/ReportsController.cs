@@ -34,10 +34,17 @@ public class ReportsController : ApiController
     [HttpGet("stats/{year}")]
     public async Task<ActionResult> GetStats(int year)
     {
-        Guid countryId = (Guid)CountryId;
-        var report = await _reportService.GetStats(year , countryId);
+        try
+        {
+            Guid countryId = CountryId ?? Guid.Empty;
+            var report = await _reportService.GetStats(year, countryId);
 
-        return Ok(ApiResult<List<KeyMetricsModel>>.Success(report));
+            return Ok(ApiResult<List<KeyMetricsModel>>.Success(report));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResult<List<KeyMetricsModel>>.Failure(new[] { $"An error occurred while fetching stats: {ex.Message}" }));
+        }
     }
 
     [HttpGet("job-execution-log")]

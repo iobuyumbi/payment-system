@@ -46,7 +46,8 @@ const SELECTED_COUNTRY_CODE_KEY = 'selected_country_code'
 
 export const getSelectedCountryCode = (): string | null => {
   if (typeof localStorage === 'undefined') return null
-  return localStorage.getItem(SELECTED_COUNTRY_CODE_KEY)
+  const code = localStorage.getItem(SELECTED_COUNTRY_CODE_KEY)
+    return code
 }
 
 export const setSelectedCountryCode = (code: string): void => {

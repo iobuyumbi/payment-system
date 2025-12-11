@@ -1,6 +1,5 @@
 import {FC} from 'react'
-import {useLocation} from 'react-router'
-import {Link} from 'react-router-dom'
+import {useLocation, Link} from 'react-router-dom'
 import clsx from 'clsx'
 import {checkIsActive, KTIcon} from '../../../../helpers'
 

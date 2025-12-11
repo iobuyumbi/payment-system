@@ -3,8 +3,9 @@ import {FC, useState, useEffect, createContext, useContext, Dispatch, SetStateAc
 import {LayoutSplashScreen} from '../../../../_metronic/layout/core'
 import {AuthModel, UserModel} from './_models'
 import * as authHelper from './AuthHelpers'
-import {getUserByToken} from './_requests'
+import {login, getUserByToken} from './_requests'
 import {WithChildren} from '../../../../_metronic/helpers'
+import {setSelectedCountryCode} from '../../../../_metronic/helpers/AppUtil'
 
 type AuthContextProps = {
   auth: AuthModel | undefined
@@ -53,21 +54,27 @@ const AuthProvider: FC<WithChildren> = ({children}) => {
 }
 
 const AuthInit: FC<WithChildren> = ({children}) => {
-  const {auth, currentUser, logout, setCurrentUser} = useAuth()
+  const {auth, currentUser, logout, setCurrentUser, saveAuth} = useAuth()
   const [showSplashScreen, setShowSplashScreen] = useState(true)
 
   // We should request user by authToken (IN OUR EXAMPLE IT'S API_TOKEN) before rendering the application
   useEffect(() => {
     const requestUser = async (apiToken: string) => {
       try {
-        if (!currentUser) {
+        if (auth && (!currentUser || !auth.permissions)) {
           const {data} = await getUserByToken(apiToken)
           if (data) {
+            const userData = data as any;
+            const updatedAuth: AuthModel = {
+              ...auth,
+              permissions: userData.permissions,
+              countries: [{ code: 'KE', name: 'Kenya', id: 'default' }],
+            };
+            saveAuth(updatedAuth);
             setCurrentUser(data)
           }
         }
       } catch (error) {
-        console.error(error)
         if (currentUser) {
           logout()
         }
@@ -76,13 +83,13 @@ const AuthInit: FC<WithChildren> = ({children}) => {
       }
     }
 
-    if (auth && auth.api_token) {
-      requestUser(auth.api_token)
+    if (auth?.api_token) {
+      setSelectedCountryCode('KE');
+      requestUser(auth.api_token);
     } else {
       logout()
       setShowSplashScreen(false)
     }
-    // eslint-disable-next-line
   }, [])
 
   return showSplashScreen ? <LayoutSplashScreen /> : <>{children}</>

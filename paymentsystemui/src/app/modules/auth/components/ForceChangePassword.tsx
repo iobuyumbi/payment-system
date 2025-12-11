@@ -100,12 +100,10 @@ export default function ForceChangePassword() {
             type="password"
           />
         </div>
-        <p style={{ fontSize: "0.875rem", color: "#6c757d" }}>
-          <ul>
-            <li>Password should be a minimum of 8 characters</li>
-            <li>It should include an alphabet, a digit, and a special character.</li>
-          </ul>
-        </p>
+        <ul style={{ fontSize: "0.875rem", color: "#6c757d" }}>
+          <li>Password should be a minimum of 8 characters</li>
+          <li>It should include an alphabet, a digit, and a special character.</li>
+        </ul>
 
         <div className=" mb-5" >
           {/* New password */}

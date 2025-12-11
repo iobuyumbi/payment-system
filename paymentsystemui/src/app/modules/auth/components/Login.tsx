@@ -63,7 +63,6 @@ export function Login() {
         const result = await authService.authenticate(values);
         console.log(result)
         if (result.userId) {
-          debugger
           setUserFound(true);
           // const {data: auth} = await login(values.username, values.password)
           //const {data: auth} = result;
@@ -118,25 +117,25 @@ export function Login() {
 
 
   const handleOtpChange = async () => {
-var data= {
-  otp: otp,
-  userId : userData.id
-}
+    var data = {
+      otp: otp,
+      userId: userData.id
+    }
+    setLoading(true)
     let result = await authService.postOTP(data);
     debugger
-    setLoading(true)
-    if (true) 
+    if (true)
       {
-         saveAuth(userData)
+         saveAuth(userData) 
           const { data: user } = await getUserByToken(userData.api_token)
           setCurrentUser(user)
           updatePermissionsForCountry();
       }
       else {
           setLoading(false)
-         
+
           saveAuth(undefined)
-          setErrors(["Invalid Otp"])
+          setErrors(["Invalid OTP"])
         }
         setLoading(false);
   };

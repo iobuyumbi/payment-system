@@ -1,6 +1,8 @@
 using DotNetEnv;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
+using Solidaridad.DataAccess.Identity;
 using Solidaridad.API;
 using Solidaridad.API.Extensions;
 using Solidaridad.API.Filters;
@@ -53,11 +55,10 @@ builder.Services.AddQuartz(q =>
 
 
 
-builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 builder.Services.AddQuartz(q =>
 {
-    q.UseMicrosoftDependencyInjectionJobFactory(); // Correct method for DI job factory
+    // MicrosoftDependencyInjectionJobFactory is now the default, no need to call UseMicrosoftDependencyInjectionJobFactory()
 
     var jobKey = new JobKey("MonthlyLoanStatementJob");
 
@@ -99,13 +100,21 @@ var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
 
+// Seed database
+await DatabaseContextSeed.SeedDatabaseAsync(
+    scope.ServiceProvider.GetRequiredService<DatabaseContext>(),
+    scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(),
+    scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>()
+);
+
 // await AutomatedMigration.MigrateAsync(scope.ServiceProvider);
 
 // app.UseSwaggerAuthorized();
 app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Solidaridad API V1"); });
 
-app.UseHttpsRedirection();
+// CORS must come before HTTPS redirection
+app.UseRouting();
 
 app.UseCors(corsPolicyBuilder =>
     corsPolicyBuilder.AllowAnyOrigin()
@@ -113,7 +122,10 @@ app.UseCors(corsPolicyBuilder =>
         .AllowAnyHeader()
 );
 
-app.UseRouting();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseStaticFiles();
 

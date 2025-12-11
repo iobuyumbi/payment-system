@@ -10,24 +10,41 @@ public static class DatabaseContextSeed
 {
     public static async Task SeedDatabaseAsync(DatabaseContext context,
        UserManager<ApplicationUser> userManager,
-       RoleManager<ApplicationRole> _roleManager,
-       ILogger logger)
+       RoleManager<ApplicationRole> _roleManager)
     {
         try
         {
             await DefaultRoles.SeedAsync(userManager, _roleManager);
             await DefaultUsers.SeedBasicUserAsync(userManager, _roleManager);
-            //await DefaultUsers.SeedSuperAdminAsync(userManager, _roleManager);
+            await DefaultUsers.SeedSuperAdminAsync(userManager, _roleManager);
             //await DefaultUsers.SeedUserAsync(userManager, _roleManager, "initiator", "initiator@gmail.com", Roles.Initiator.ToString());
             //await DefaultUsers.SeedUserAsync(userManager, _roleManager, "reviewer", "reviewer@gmail.com", Roles.Reviewer.ToString());
             //await DefaultUsers.SeedUserAsync(userManager, _roleManager, "approver", "approver@gmail.com", Roles.Approver.ToString());
 
-            logger.LogInformation("Finished Seeding Default Data");
-            logger.LogInformation("Application Starting");
+            await SeedCountriesAsync(context);
+            Console.WriteLine("Finished Seeding Default Data");
+            Console.WriteLine("Application Starting");
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "An error occurred seeding the DB");
+            Console.WriteLine($"An error occurred seeding the DB: {ex.Message}");
+        }
+    }
+
+    private static async Task SeedCountriesAsync(DatabaseContext context)
+    {
+        if (!context.Countries.Any())
+        {
+            context.Countries.Add(new Solidaridad.Core.Entities.Country
+            {
+                Id = Guid.NewGuid(),
+                CountryName = "Kenya",
+                Code = "KE",   // ISO 3166-1 alpha-2
+                CurrencyName = "Kenyan Shilling",
+                CurrencyPrefix = "KES",
+                IsActive = true
+            });
+            await context.SaveChangesAsync();
         }
     }
 }

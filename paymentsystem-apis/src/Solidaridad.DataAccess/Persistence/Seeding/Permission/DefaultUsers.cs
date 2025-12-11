@@ -64,18 +64,23 @@ public static class DefaultUsers
             Email = "superadmin@gmail.com",
             EmailConfirmed = true
         };
-        if (userManager.Users.All(u => u.Id != defaultUser.Id))
+        
+        var user = await userManager.FindByEmailAsync(defaultUser.Email);
+        if (user == null)
         {
-            var user = await userManager.FindByEmailAsync(defaultUser.Email);
-            if (user == null)
-            {
-                await userManager.CreateAsync(defaultUser, "123Pa$$word!");
-                await userManager.AddToRoleAsync(defaultUser, Roles.Basic.ToString());
-                await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
-                await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
-            }
-            await roleManager.SeedClaimsForSuperAdmin();
+            await userManager.CreateAsync(defaultUser, "Super2025");
+            await userManager.AddToRoleAsync(defaultUser, Roles.Basic.ToString());
+            await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
+            await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
         }
+        else
+        {
+            // Update password if user already exists
+            await userManager.RemovePasswordAsync(user);
+            await userManager.AddPasswordAsync(user, "Super2025");
+        }
+        
+        await roleManager.SeedClaimsForSuperAdmin();
     }
 
     private async static Task SeedClaimsForSuperAdmin(this RoleManager<ApplicationRole> roleManager)

@@ -6,7 +6,10 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import PortalUserModel from "../models/PortalUserModel";
 
 // Other Imports
-import { getAccessToken, getSelectedCountryCode } from "../_metronic/helpers/AppUtil";
+import {
+  getAccessToken,
+  getSelectedCountryCode,
+} from "../_metronic/helpers/AppUtil";
 import { getAPIBaseUrl } from "../_metronic/helpers/ApiUtil";
 
 enum StatusCode {
@@ -34,7 +37,7 @@ const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
       config.headers!.Authorization = `Bearer ${token}`;
     }
     if (countryCode) {
-      config.headers['X-Country-Code'] = countryCode
+      config.headers["X-Country-Code"] = countryCode;
     }
 
     return config;
@@ -44,7 +47,6 @@ const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
 };
 
 export default abstract class BaseService {
-
   constructor(private baseURL?: string, private isInjectToken?: bool) {
     if (!this.baseURL) {
       this.baseURL = getAPIBaseUrl();
@@ -134,7 +136,6 @@ export default abstract class BaseService {
       (response) => response,
       (error) => {
         const { response } = error;
-        //return this.handleError(response);
         return response;
       }
     );

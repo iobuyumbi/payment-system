@@ -81,10 +81,30 @@ public class PermissionService : BaseService, IPermissionService
         using (var connection = GetConnection())
         {
             await connection.OpenAsync();
-            return await connection.QueryAsync<PermissionResponseModel>("select * from GetPermissions(@RoleId)",
+            // Direct SQL query instead of function call (function doesn't exist in PostgreSQL)
+            var roleIdGuid = Guid.Parse(roleId);
+            var sql = @"
+                SELECT 
+                    p.""Id"",
+                    COALESCE(p.""Description"", '') AS ""PermissionDescription"",
+                    p.""PermissionName"",
+                    '' AS ""ModuleName"",
+                    CASE WHEN rp.""Id"" IS NOT NULL THEN true ELSE false END AS ""Selected""
+                FROM 
+                    ""Permission"" p
+                LEFT JOIN 
+                    ""RolePermission"" rp ON p.""Id"" = rp.""PermissionId"" 
+                    AND rp.""RoleId""::uuid = @RoleIdGuid
+                    AND rp.""IsDeleted"" = false
+                WHERE 
+                    p.""IsDeleted"" = false
+                ORDER BY 
+                    p.""PermissionName""";
+            
+            return await connection.QueryAsync<PermissionResponseModel>(sql,
                 new
                 {
-                    RoleId = new Guid(roleId)
+                    RoleIdGuid = roleIdGuid
                 });
         }
     }

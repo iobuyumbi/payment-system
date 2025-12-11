@@ -1,4 +1,4 @@
-﻿using Solidaridad.Application.Services;
+using Solidaridad.Application.Services;
 
 namespace Solidaridad.API.Middleware;
 
@@ -15,12 +15,36 @@ public class CountryMiddleware
     {
         if (context.Request.Headers.TryGetValue("X-Country-Code", out var countryCode))
         {
-            var countryList = await countryService.GetAllAsync();
-            var country = countryList.Any() ? countryList.FirstOrDefault(c => c.Code == countryCode!) : null;
-            if (country != null)
+            try
             {
-                context.Items["CountryId"] = country.Id;
+                var countryList = await countryService.GetAllAsync();
+                Console.WriteLine($"CountryMiddleware: Looking for country code: {countryCode}");
+                Console.WriteLine($"CountryMiddleware: Found {countryList?.Count() ?? 0} countries in database");
+                
+                if (countryList != null && countryList.Any())
+                {
+                    var code = countryCode.ToString().Trim();
+                    Console.WriteLine($"CountryMiddleware: Available country codes: {string.Join(", ", countryList.Select(c => c.Code))}");
+                    var country = countryList.FirstOrDefault(c => string.Equals(c.Code?.Trim(), code, StringComparison.OrdinalIgnoreCase));
+                    if (country != null)
+                    {
+                        context.Items["CountryId"] = country.Id;
+                        Console.WriteLine($"CountryMiddleware: Found country {country.CountryName} with ID {country.Id}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"CountryMiddleware: Country with code '{code}' not found");
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in CountryMiddleware: {ex.Message}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("CountryMiddleware: No X-Country-Code header found");
         }
 
         await _next(context);

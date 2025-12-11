@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿﻿﻿﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -136,10 +136,25 @@ public class AccountService : IAccountService
         // access log
         await SaveAccessLog(ip, userAgent, countryId, user);
 
-        // send OTP to user email
+        // send OTP to user email (non-blocking - don't fail login if email fails)
         var otp = await CreateAndStoreOtpAsync(user.Id);
         var emailBody = $"Your OTP is {otp}. It will expire in 5 minutes.";
-        await _emailService.SendEmailAsync(EmailMessage.Create(user.Email, emailBody, "Solidaridad - Your OTP Code"));
+        
+        // Log OTP to console for development/debugging
+        Console.WriteLine($"[OTP] User: {user.Email}, OTP: {otp}");
+        
+        // Send email in background - don't block login if email fails
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await _emailService.SendEmailAsync(EmailMessage.Create(user.Email, emailBody, "Solidaridad - Your OTP Code"));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[OTP Email Error] Failed to send OTP email to {user.Email}: {ex.Message}");
+            }
+        });
 
         return new LoginResponseModel
         {
@@ -168,7 +183,7 @@ public class AccountService : IAccountService
             Status = AccessStatus.Success,
             IpAddress = ip,
             UserAgent = userAgent,
-            CountryId = (Guid)countryId
+            CountryId = countryId ?? Guid.Empty
         });
     }
 

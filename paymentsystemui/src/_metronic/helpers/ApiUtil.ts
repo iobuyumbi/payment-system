@@ -54,13 +54,21 @@ export const getRetryDelay = () => {
 }
 
 export function isAllowed(perm: any) {
-    const aware_user = JSON.parse(localStorage.getItem(AUTH_LOCAL_STORAGE_KEY) || "");
-    if (aware_user) {
-        const permissions = aware_user?.permissions;
-        const exists = permissions.includes(perm);
-        return exists;
+    const lsValue = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
+    if (!lsValue) {
+        return false;
     }
-    return false
+
+    try {
+        const aware_user = JSON.parse(lsValue);
+        if (aware_user && Array.isArray(aware_user.permissions)) {
+            return aware_user.permissions.includes(perm);
+        }
+    } catch (e) {
+        console.error("Error parsing user auth data from local storage", e);
+    }
+    
+    return false;
 }
 
 export function getRoleKeyFromRoleName(roles: string[]): 'approver' | 'reviewer' | 'initiator' {

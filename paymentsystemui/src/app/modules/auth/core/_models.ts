@@ -2,6 +2,8 @@ export interface AuthModel {
   api_token: string
   refreshToken?: string
   userId: string
+  countries?: Array<{id: string; code: string; name: string}>
+  permissions?: string[]
 }
 
 export interface UserAddressModel {

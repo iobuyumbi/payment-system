@@ -126,11 +126,21 @@ public class ReportService : IReportService
     {
         var keyMetrics = new List<KeyMetricsModel>();
 
-        // keyMetrics.Add(new KeyMetricsModel { Title = "Countries", Value = 3 });
-        keyMetrics.Add(new KeyMetricsModel { Title = "Farmers", Value = _farmerRepo.GetCount(countryId) });
-        keyMetrics.Add(new KeyMetricsModel { Title = "Projects", Value = _loanBatchRepository.GetProjectCount(countryId) });
-        keyMetrics.Add(new KeyMetricsModel { Title = "Co-operatives", Value = _cooperativeRepository.GetCount(countryId) });
-        keyMetrics.Add(new KeyMetricsModel { Title = "Loan Products", Value = _loanBatchRepository.GetLoanBatchCount(countryId) });
+        try
+        {
+            // keyMetrics.Add(new KeyMetricsModel { Title = "Countries", Value = 3 });
+            keyMetrics.Add(new KeyMetricsModel { Title = "Farmers", Value = _farmerRepo.GetCount(countryId) });
+            keyMetrics.Add(new KeyMetricsModel { Title = "Projects", Value = _loanBatchRepository.GetProjectCount(countryId) });
+            keyMetrics.Add(new KeyMetricsModel { Title = "Co-operatives", Value = _cooperativeRepository.GetCount(countryId) });
+            keyMetrics.Add(new KeyMetricsModel { Title = "Loan Products", Value = _loanBatchRepository.GetLoanBatchCount(countryId) });
+        }
+        catch (Exception ex)
+        {
+            // Log error and return empty list or rethrow
+            // For now, return empty metrics if there's an error
+            Console.WriteLine($"Error getting stats for year {year}, countryId {countryId}: {ex.Message}");
+            throw;
+        }
 
         return keyMetrics;
     }

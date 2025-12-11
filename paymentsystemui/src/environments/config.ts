@@ -1,6 +1,6 @@
 const config = {
-    possibeEnvironments: "Local OR Development OR Staging OR Production",
-    runningEnv: "Staging",
+    possibleEnvironments: "Local OR Development OR Staging OR Production",
+    runningEnv: "Local",
     subdirectory:"/",
     retryDelay: 15,
     dateOnlyFormat: 'MMM DD, YYYY',

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Solidaridad.Application.Models;
 using Solidaridad.Application.Models.AdminLevels;
@@ -52,9 +52,9 @@ public class CountryService : ICountryService
             out ReadOnlyCollection<CountryResponseModel> countries) || (countries == null || !countries.Any()))
         {
             var _countries = new List<Country>();
-            if (countryId != Guid.Empty)
+            if (countryId.HasValue && countryId.Value != Guid.Empty)
             {
-                _countries = await _countryRepository.GetAllAsync(c => countryId == c.Id);
+                _countries = await _countryRepository.GetAllAsync(c => c.Id == countryId.Value);
             }
             else
             {
