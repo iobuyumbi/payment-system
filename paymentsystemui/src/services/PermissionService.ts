@@ -55,7 +55,7 @@ export default class PermissionService extends BaseService {
     try {
      
       const response = await this.post(
-        this.getURL("api/Account/GetPermissions"), username
+        this.getURL("api/Account/GetPermissions"), JSON.stringify(username)
       );
 
       if (response && this.isSuccessResponse(response)) {
