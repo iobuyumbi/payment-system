@@ -61,7 +61,7 @@ public class TokenController : ApiController
                     userId,
                     api_token = tokenRequest.api_token,
                     permissions = permissions?.Distinct().ToList(),
-                    countries = new[] { new { code = 'KE', name = 'Kenya', id = 'default' } }
+                    countries = new[] { new { code = "KE", name = "Kenya", id = "default" } }
                 });
             }
             return BadRequest(new { message = "Invalid token: User ID not found" });
