@@ -8,9 +8,19 @@ public static class DefaultRoles
 {
     public static async Task SeedAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
     {
-        await roleManager.CreateAsync(new ApplicationRole(Roles.Admin.ToString()));
-        await roleManager.CreateAsync(new ApplicationRole(Roles.Initiator.ToString()));
-        await roleManager.CreateAsync(new ApplicationRole(Roles.Reviewer.ToString()));
-        await roleManager.CreateAsync(new ApplicationRole(Roles.Approver.ToString()));
+        await CreateRoleIfNotExists(roleManager, Roles.SuperAdmin.ToString());
+        await CreateRoleIfNotExists(roleManager, Roles.Admin.ToString());
+        await CreateRoleIfNotExists(roleManager, Roles.Basic.ToString());
+        await CreateRoleIfNotExists(roleManager, Roles.Initiator.ToString());
+        await CreateRoleIfNotExists(roleManager, Roles.Reviewer.ToString());
+        await CreateRoleIfNotExists(roleManager, Roles.Approver.ToString());
+    }
+
+    private static async Task CreateRoleIfNotExists(RoleManager<ApplicationRole> roleManager, string roleName)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new ApplicationRole(roleName));
+        }
     }
 }

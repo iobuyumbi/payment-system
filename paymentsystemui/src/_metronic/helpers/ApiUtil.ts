@@ -1,5 +1,5 @@
 
-import { AUTH_LOCAL_STORAGE_KEY } from "../../app/modules/auth";
+import { AUTH_LOCAL_STORAGE_KEY } from "../../app/modules/auth/core/AuthHelpers";
 import config from "../../environments/config";
 import environments from "../../environments/environments";
 

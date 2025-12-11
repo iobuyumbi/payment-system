@@ -6,6 +6,7 @@ import * as authHelper from './AuthHelpers'
 import {login, getUserByToken} from './_requests'
 import {WithChildren} from '../../../../_metronic/helpers'
 import {setSelectedCountryCode} from '../../../../_metronic/helpers/AppUtil'
+import PermissionService from '../../../../services/PermissionService'
 
 type AuthContextProps = {
   auth: AuthModel | undefined
@@ -65,9 +66,19 @@ const AuthInit: FC<WithChildren> = ({children}) => {
           const {data} = await getUserByToken(apiToken)
           if (data) {
             const userData = data as any;
+            const permissionService = new PermissionService();
+            let perms = userData.permissions;
+            if (!perms || (Array.isArray(perms) && perms.length === 0)) {
+              try {
+                const fetched = await permissionService.GetPermissions(userData.username);
+                if (Array.isArray(fetched)) {
+                  perms = fetched;
+                }
+              } catch {}
+            }
             const updatedAuth: AuthModel = {
               ...auth,
-              permissions: userData.permissions,
+              permissions: perms,
               countries: [{ code: 'KE', name: 'Kenya', id: 'default' }],
             };
             saveAuth(updatedAuth);
