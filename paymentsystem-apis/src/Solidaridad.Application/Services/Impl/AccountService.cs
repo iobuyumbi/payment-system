@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿using AutoMapper;
+﻿﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -118,17 +118,23 @@ public class AccountService : IAccountService
         var token = JwtHelper.GenerateToken(user, _configuration, validTo);
         var refreshToken = JwtHelper.GenerateRefreshToken(user, _configuration);
 
-        foreach (var role in _roleManager.Roles.ToList())
+        // Get user roles and permissions from Identity claims
+        var userRoles = await _userManager.GetRolesAsync(user);
+        roles.AddRange(userRoles);
+        
+        foreach (var roleName in userRoles)
         {
-            if (await _userManager.IsInRoleAsync(user, role.Name))
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role != null)
             {
-                var all = await _permissionService.GetAllAsync(role.Id, new Guid());
-                permissions.AddRange(all.Where(c => c.Selected == true).Select(c => c.PermissionName));
-
-                // add user role
-                roles.Add(role.Name);
+                var claims = await _roleManager.GetClaimsAsync(role);
+                var permissionClaims = claims.Where(c => c.Type == "Permission").Select(c => c.Value);
+                permissions.AddRange(permissionClaims);
             }
         }
+        
+        // Remove duplicate permissions
+        permissions = permissions.Distinct().ToList();
 
         var userCountries = _mapper.Map<IEnumerable<CountryResponseModel>>(await _userRepository.GetUserCountries(user.Id));
         var countryId = (userCountries != null && userCountries.Count() > 0) ? userCountries.FirstOrDefault()?.Id : null;
@@ -242,7 +248,6 @@ public class AccountService : IAccountService
 
     public async Task<IEnumerable<string>> GetPermissionsAsync(string username, Guid? countryId)
     {
-
         try
         {
             var permissions = new List<string>();
@@ -250,26 +255,47 @@ public class AccountService : IAccountService
             var user = _userManager.Users.FirstOrDefault(u =>
                         u.UserName == username);
 
-            foreach (var role in _roleManager.Roles.ToList())
+            if (user == null)
             {
-                if (countryId == role.CountryId)
+                Console.WriteLine($"User not found: {username}");
+                return permissions;
+            }
+
+            // Get all roles for the user
+            var userRoles = await _userManager.GetRolesAsync(user);
+            
+            Console.WriteLine($"User {username} has {userRoles.Count} roles: {string.Join(", ", userRoles)}");
+
+            // Get permissions from Identity role claims (not RolePermission table)
+            foreach (var roleName in userRoles)
+            {
+                var role = await _roleManager.FindByNameAsync(roleName);
+                if (role != null)
                 {
-                    if (await _userManager.IsInRoleAsync(user, role.Name))
+                    // Check if role matches country (if countryId is provided and role has CountryId)
+                    // If countryId is null or role.CountryId is null, include the role
+                    bool includeRole = countryId == null || role.CountryId == null || countryId == role.CountryId;
+                    
+                    if (includeRole)
                     {
-                        var all = await _permissionService.GetAllAsync(role.Id, new Guid());
-                        permissions.AddRange(all.Where(c => c.Selected == true).Select(c => c.PermissionName));
-
-
+                        var claims = await _roleManager.GetClaimsAsync(role);
+                        var permissionClaims = claims.Where(c => c.Type == "Permission").Select(c => c.Value);
+                        permissions.AddRange(permissionClaims);
+                        Console.WriteLine($"Role {roleName} has {permissionClaims.Count()} permissions");
                     }
                 }
             }
 
-
-            return permissions;
+            // Remove duplicates
+            var distinctPermissions = permissions.Distinct().ToList();
+            Console.WriteLine($"Total distinct permissions for {username}: {distinctPermissions.Count}");
+            
+            return distinctPermissions;
         }
         catch (Exception ex)
         {
-
+            Console.WriteLine($"Error in GetPermissionsAsync for {username}: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
             throw ex;
         }
     }

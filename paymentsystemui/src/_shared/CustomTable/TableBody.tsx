@@ -30,7 +30,6 @@ const TableBody = (props: any) => {
 
         try {
             const data = await fetchDataFunc(page, size);
-debugger
             if (data && data.rows && data.totalRows !== undefined) {
                 setServerRowData(data.rows);
                 setTotalRows(data.totalRows);
@@ -84,8 +83,7 @@ debugger
                     pagination={finalPagination}
                     paginationPageSize={pageSize}
                     paginationPageSizeSelector={[10, 50, 100]}
-                    rowSelection={'multiple'}
-                    suppressRowClickSelection={true}
+                    rowSelection={{ mode: 'multiRow', enableClickSelection: false }}
                     ref={gridRef}
                 />
             )}

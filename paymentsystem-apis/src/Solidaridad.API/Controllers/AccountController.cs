@@ -46,51 +46,31 @@ public class AccountController : ApiController
     [AllowAnonymous]
     public async Task<IActionResult> GetPermissions([FromBody] string username)
     {
-        var _countryId = CountryId.HasValue ? CountryId : Guid.Parse("a82beb82-2d92-11ef-ad6b-46477cdd49d1");
-        
-        var permissions = await _userService.GetPermissionsAsync(username, _countryId);
-        
-        // If permissions are empty, try to seed them for admin users
-        if (!permissions.Any())
-        {
-            // Force re-seed permissions for admin users - return all permissions as a workaround
-            if (username == "superadmin" || username == "adminuser")
-            {
-                var allPermissions = Solidaridad.DataAccess.Persistence.Seeding.Permission.Permissions.GenerateAllPermissions();
-                return Ok(ApiResult<IEnumerable<string>>.Success(allPermissions));
-            }
-        }
-        
-        return Ok(ApiResult<IEnumerable<string>>.Success(permissions));
-    }
-
-    [HttpPost("DebugUserInfo")]
-    [AllowAnonymous]
-    public async Task<IActionResult> DebugUserInfo([FromBody] string username)
-    {
         try
         {
             var _countryId = CountryId.HasValue ? CountryId : Guid.Parse("a82beb82-2d92-11ef-ad6b-46477cdd49d1");
+            
+            // Debug logging
+            Console.WriteLine($"GetPermissions called with username: {username}");
+            
             var permissions = await _userService.GetPermissionsAsync(username, _countryId);
             
-            return Ok(new { 
-                username = username,
-                permissions = permissions,
-                permissionCount = permissions.Count(),
-                countryId = _countryId
-            });
+            // If permissions are empty, log warning but don't return workaround
+            // Permissions should be seeded via role claims during database seeding
+            if (!permissions.Any())
+            {
+                Console.WriteLine($"WARNING: No permissions found for user {username}. Ensure user has roles with permission claims assigned.");
+            }
+            
+            Console.WriteLine($"Returning {permissions.Count()} permissions for user {username}");
+            return Ok(ApiResult<IEnumerable<string>>.Success(permissions));
         }
         catch (Exception ex)
         {
-            return Ok(new { 
-                username = username,
-                error = ex.Message,
-                stackTrace = ex.StackTrace
-            });
+            Console.WriteLine($"Error in GetPermissions: {ex.Message}");
+            return BadRequest($"Error: {ex.Message}");
         }
     }
-
-
     [HttpPost]
     [Route("access-log")]
     public async Task<IActionResult> Search(SearchParams searchParams)

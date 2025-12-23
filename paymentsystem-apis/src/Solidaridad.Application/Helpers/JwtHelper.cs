@@ -13,7 +13,7 @@ public static class JwtHelper
     {
         var secretKey = configuration.GetValue<string>("JwtConfiguration:SecretKey");
 
-        var key = Encoding.ASCII.GetBytes(secretKey);
+        var key = Encoding.UTF8.GetBytes(secretKey);
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -43,7 +43,7 @@ public static class JwtHelper
     {
         var secretKey = configuration.GetValue<string>("JwtConfiguration:SecretKey");
 
-        var key = Encoding.ASCII.GetBytes(secretKey);
+        var key = Encoding.UTF8.GetBytes(secretKey);
 
         var tokenHandler = new JwtSecurityTokenHandler();
 

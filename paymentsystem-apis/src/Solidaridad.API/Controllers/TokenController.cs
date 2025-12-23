@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Solidaridad.API.Controllers;
 using Solidaridad.Application.Services;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 [AllowAnonymous]
@@ -35,40 +36,66 @@ public class TokenController : ApiController
 
         try
         {
-            tokenHandler.ValidateToken(tokenRequest.api_token, new TokenValidationParameters
+            // Create validation parameters that match the authentication middleware
+            var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["JwtConfiguration:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = _configuration["JwtConfiguration:Audience"],
+                ValidateIssuer = false,  // Must match the authentication middleware
+                ValidateAudience = false, // Must match the authentication middleware
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
+            };
 
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            var userId = jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
-            var username = jwtToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name)?.Value ?? userId;
+            // Manually validate the token
+            var principal = tokenHandler.ValidateToken(tokenRequest.api_token, validationParameters, out var validatedToken);
 
-            if (!string.IsNullOrEmpty(userId))
+            var username = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                           ?? principal.FindFirst(ClaimTypes.Name)?.Value
+                           ?? principal.Identity?.Name;
+
+            var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? principal.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(userId))
             {
-                // Get user permissions
-                var permissions = await _accountService.GetPermissionsAsync(username, null);
-                
-                return Ok(new
-                {
-                    userId,
-                    api_token = tokenRequest.api_token,
-                    permissions = permissions?.Distinct().ToList(),
-                    countries = new[] { new { code = "KE", name = "Kenya", id = "default" } }
-                });
+                Console.WriteLine($"[TokenController] verify_token missing required claims");
+                return Unauthorized(new { message = "Invalid token", error = "Missing required claims" });
             }
-            return BadRequest(new { message = "Invalid token: User ID not found" });
+
+            // Get user permissions
+            var permissions = await _accountService.GetPermissionsAsync(username, null);
+            Console.WriteLine($"[TokenController] verify_token username={username} userId={userId} permissions={(permissions?.Count() ?? 0)}");
+
+            return Ok(new
+            {
+                userId,
+                username,
+                api_token = tokenRequest.api_token,
+                permissions = permissions?.Distinct().ToList() ?? new List<string>(),
+                countries = new[] { new { 
+                    code = "KE", 
+                    name = "Kenya", 
+                    id = "default",
+                    currencyName = "Kenyan Shilling",
+                    currencyPrefix = "KES",
+                    currencySuffix = ""
+                } }
+            });
+        }
+        catch (SecurityTokenExpiredException)
+        {
+            return Unauthorized(new { message = "Token has expired" });
+        }
+        catch (SecurityTokenInvalidSignatureException ex)
+        {
+            Console.WriteLine($"[TokenController] Signature validation failed: {ex.Message}");
+            return Unauthorized(new { message = "Token signature is invalid", error = ex.Message });
         }
         catch (Exception ex)
         {
-            return Unauthorized(new { message = "Token is invalid or expired", error = ex.Message });
+            Console.WriteLine($"[TokenController] Token validation error: {ex.GetType().Name} - {ex.Message}");
+            return Unauthorized(new { message = "Invalid token", error = ex.Message });
         }
     } 
     #endregion

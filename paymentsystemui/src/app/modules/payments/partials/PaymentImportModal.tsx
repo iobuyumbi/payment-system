@@ -44,7 +44,7 @@ export function PaymentImportModal_not_in_use(props: any) {
       }
       setLoading(true);
 
-      const response = uploadExcel(formData, exModule, batchId);
+      const response = uploadExcel(formData, exModule, batchId, 'KE');
 
       setShowProcessing(true);
       setTimeout(() => {

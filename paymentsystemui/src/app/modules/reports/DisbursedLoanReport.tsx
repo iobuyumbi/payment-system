@@ -224,7 +224,6 @@ const DisbursedLoanReport = () => {
   };
 
   const generatePdfPreview = async () => {
-    debugger;
 
     if (!startDate) {
       setStartDate(new Date());

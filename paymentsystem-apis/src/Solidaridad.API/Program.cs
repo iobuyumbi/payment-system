@@ -81,6 +81,9 @@ builder.Services.AddSwagger();
 
 
 
+// Add data protection services first (required for DataProtectorTokenProvider)
+builder.Services.AddDataProtection();
+
 builder.Services.AddDataAccess(builder.Configuration)
     .AddApplication(builder.Environment);
 

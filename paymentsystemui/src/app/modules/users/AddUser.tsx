@@ -112,7 +112,6 @@ const AddUser: FC = () => {
       setLoading(true);
       setTimeout(async () => {
         !id ? values.username = values.email : '';
-        debugger
         // find role name
         const transformedRoleNames = values.roleId.map((p: any) => p.label);
 

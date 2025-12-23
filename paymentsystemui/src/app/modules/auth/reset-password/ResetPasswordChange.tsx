@@ -60,7 +60,6 @@ const ResetPasswordChange = () => {
 
                 const response = await authService.changePassword(data);
                 console.log(response);
-                 debugger
                 if (response && response.id) {
                     navigate('/auth/reset-password/changed');
                 }

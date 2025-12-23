@@ -107,7 +107,6 @@ console.log("Profile after fetch:", API_URL + encodeURI(profile.logoUrl ?? ""));
       setLoading(true);
       setTimeout(async () => {
         const updatedData = { ...profile, ...values };
-        debugger;
         const dis = values.hasDisability;
         setProfile(updatedData);
 
@@ -144,7 +143,6 @@ console.log("Profile after fetch:", API_URL + encodeURI(profile.logoUrl ?? ""));
         setLoading(true);
         try {
           const res = await locationService.getById(id);
-          debugger;
           if (!res || !res.id) {
             throw new Error("Profile not found");
           }

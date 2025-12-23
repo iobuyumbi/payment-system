@@ -60,7 +60,6 @@ const FarmerLoans = (props : any) => {
   }, [farmer.id]);
 
   const ActionComponent = (props: any) => {
-    debugger
     return <div className="d-flex flex-row">
       {/* <a className="link-primary" onClick={() => showDetails(props.data.loanApplicationId)}>
         View Detail

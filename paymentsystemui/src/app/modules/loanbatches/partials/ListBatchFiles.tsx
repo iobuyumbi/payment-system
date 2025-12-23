@@ -20,7 +20,6 @@ const ListBatchFiles = (props: any) => {
 
   const bindFiles = async () => {
     const files = await loanBatchService.getLoanBatchFiles(batchId);
-    debugger;
     if (files && files.length > 0) {
       // handle files here
       setAttachments(files);

@@ -40,7 +40,6 @@ const LoanBatchDetail = () => {
   //const loanBatch = useSelector((state: any) => state?.loanBatches);
   const getLoanBatch = async (id: string) => {
     try {
-      debugger
       const response = await loanBatchService.getSingle(id)
       setLoanBatch(response);
     }

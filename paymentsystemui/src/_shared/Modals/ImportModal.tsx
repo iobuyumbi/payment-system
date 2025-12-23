@@ -146,7 +146,6 @@ export function ImportModal(props: any) {
         paymentBatchId: props.paymentBatchId,
       };
 
-      debugger;
       const response = await farmerService.getFarmerData(data);
 
       if (response == null) {
@@ -293,7 +292,6 @@ export function ImportModal(props: any) {
     // }
     setLoading(true);
     try {
-      debugger;
       const response = await axios.get(
         `${getAPIBaseUrl()}api/fileUpload/download/${exModule}`,
         {

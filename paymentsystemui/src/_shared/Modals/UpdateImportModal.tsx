@@ -41,7 +41,7 @@ export function UpdateImportModal(props: any) {
             }
             setLoading(true);
 
-            await uploadExcel(formData, exModule, batchId)
+            await uploadExcel(formData, exModule, batchId, 'KE')
                 .then((response: any) => {
 
                     const toastId = toast.loading("Please wait...");

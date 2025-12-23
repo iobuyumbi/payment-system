@@ -233,9 +233,7 @@ export const ListPaymentBatch: React.FC = (props: any) => {
         pageSize: pageSize,
       };
       const response = await paymentBatchService.getPaymentBatchPagedData(searchParams);
-      debugger;
       const data = await response;
-debugger
       // Perform the data transformation here 
       const transformedData = {
         rows: data.result.paymentBatchResponseModel, // Extract the array of farmers

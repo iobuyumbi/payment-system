@@ -70,18 +70,22 @@ export default class AuthService extends BaseService {
 
 
    postOTP = async (params: any): Promise<any | null> => {
-    const response = await this.post(
-      this.getURL("api/Account/verify-otp"),
-      params
-    );
+    try {
+      const response = await this.post(
+        this.getURL("api/Account/verify-otp"),
+        params
+      );
 
-    if (response && this.isSuccessResponse(response) && response.data) {
-      const data: any = response.data;
-      if (data && data.succeeded) {
-        return data.result as any;
+      if (response && this.isSuccessResponse(response) && response.data) {
+        const data: any = response.data;
+        // Return the full ApiResult object so we can check succeeded and result
+        return data;
       }
+      return response?.data || null;
+    } catch (ex: any) {
+      console.error('OTP verification error:', ex);
+      return { succeeded: false, result: false, errors: ex.response?.data?.Errors || ["OTP verification failed"] };
     }
-    return response.data;
   };
 
 }

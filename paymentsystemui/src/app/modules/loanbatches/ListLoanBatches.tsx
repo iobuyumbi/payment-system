@@ -278,7 +278,6 @@ export const ListLoanBatches: React.FC = (props: any) => {
              countryId: null,
           };
         const response = await loanBatchService.getLoanBatchPagedData(searchParams);
-     debugger;
         const data = await response;
 
       

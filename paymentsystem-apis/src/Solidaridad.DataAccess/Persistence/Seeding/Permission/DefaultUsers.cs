@@ -39,21 +39,73 @@ public static class DefaultUsers
         UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager)
     {
-        var defaultUser = new ApplicationUser
+        // Seed adminuser
+        var adminUser = new ApplicationUser
         {
             UserName = "adminuser",
             Email = "chauhan.munish1@gmail.com",
             EmailConfirmed = true
         };
-        if (userManager.Users.All(u => u.Id != defaultUser.Id))
+        var existingAdminUser = await userManager.FindByEmailAsync(adminUser.Email);
+        if (existingAdminUser == null)
         {
-            var user = await userManager.FindByEmailAsync(defaultUser.Email);
-            if (user == null)
+            await userManager.CreateAsync(adminUser, "123Pa$$word!");
+            await userManager.AddToRoleAsync(adminUser, Roles.Admin.ToString());
+        }
+        else
+        {
+            // Ensure existing user has Admin role
+            if (!await userManager.IsInRoleAsync(existingAdminUser, Roles.Admin.ToString()))
             {
-                await userManager.CreateAsync(defaultUser, "123Pa$$word!");
-                await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
+                await userManager.AddToRoleAsync(existingAdminUser, Roles.Admin.ToString());
             }
         }
+
+        // Seed admin user (from initial request)
+        var admin = new ApplicationUser
+        {
+            UserName = "admin",
+            Email = "avivcapital2025@gmail.com",
+            EmailConfirmed = true,
+            IsLoginEnabled = true,
+            IsActive = true
+        };
+        var existingAdmin = await userManager.FindByEmailAsync(admin.Email);
+        if (existingAdmin == null)
+        {
+            await userManager.CreateAsync(admin, "Aviv2025");
+            await userManager.AddToRoleAsync(admin, Roles.Admin.ToString());
+        }
+        else
+        {
+            // Update password using ChangePasswordAsync (requires current password) or remove/add password
+            // Since we don't know the current password, we'll use a password reset token
+            try
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(existingAdmin);
+                var resetResult = await userManager.ResetPasswordAsync(existingAdmin, token, "Aviv2025");
+                if (!resetResult.Succeeded)
+                {
+                    Console.WriteLine($"Warning: Could not reset password for admin user: {string.Join(", ", resetResult.Errors.Select(e => e.Description))}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Could not reset password for admin user (password may already be correct): {ex.Message}");
+                // Continue - password might already be correct
+            }
+            
+            if (!await userManager.IsInRoleAsync(existingAdmin, Roles.Admin.ToString()))
+            {
+                await userManager.AddToRoleAsync(existingAdmin, Roles.Admin.ToString());
+            }
+            existingAdmin.IsLoginEnabled = true;
+            existingAdmin.IsActive = true;
+            await userManager.UpdateAsync(existingAdmin);
+        }
+        
+        // Always ensure Admin role has all permissions
+        await roleManager.SeedClaimsForSuperAdmin();
     }
 
     public static async Task SeedSuperAdminAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
@@ -75,9 +127,21 @@ public static class DefaultUsers
         }
         else
         {
-            // Update password if user already exists
-            await userManager.RemovePasswordAsync(user);
-            await userManager.AddPasswordAsync(user, "Super2025");
+            // Update password if user already exists using password reset token
+            try
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                var resetResult = await userManager.ResetPasswordAsync(user, token, "Super2025");
+                if (!resetResult.Succeeded)
+                {
+                    Console.WriteLine($"Warning: Could not reset password for superadmin user: {string.Join(", ", resetResult.Errors.Select(e => e.Description))}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Could not reset password for superadmin user (password may already be correct): {ex.Message}");
+                // Continue - password might already be correct
+            }
             
             // Ensure user has all required roles
             if (!await userManager.IsInRoleAsync(user, Roles.Basic.ToString()))

@@ -147,7 +147,6 @@ const handleExcelExport = async () => {
   const exportExcel = async () => {
     const workbook = XLSX.utils.book_new();
     let hasData = false;
-debugger
     const mappedData: any[] = []; // collect totals across all batches
 
     for (const batch of loanBatches) {

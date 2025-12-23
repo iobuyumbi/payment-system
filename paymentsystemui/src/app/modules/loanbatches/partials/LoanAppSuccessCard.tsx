@@ -244,7 +244,6 @@ const LoanAppSuccessCard = ({ batch, status, excelImportId, isAllowed }: LoanApp
     };
 
     const afterConfirm = async (res: any) => {
-        debugger
         if (res == false) {
             setShowConfirmBox(false);
         }
@@ -254,7 +253,6 @@ const LoanAppSuccessCard = ({ batch, status, excelImportId, isAllowed }: LoanApp
                 remarks: ''
             };
             const response = await loanBatchService.updateLoanBatchStage(initValues, batch.id, excelImportId);
-            debugger
             setTimeout(() => {
                 if (btnAction == 'approve' || btnAction == 'approved') {
                     navigate(`/loan-batch-details/${batch.id}/loan-applications`)

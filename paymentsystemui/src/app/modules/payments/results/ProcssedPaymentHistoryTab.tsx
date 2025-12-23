@@ -130,7 +130,6 @@ error → "Failed - Error Encountered"
 
 aborted → "Cancelled" */
     }
-    debugger;
     const completed = response.filter(
       (item) => item.paymentStatus === "271d9c1a-2c4f-4ee2-ad0f-d7dc36bd255f"
     );

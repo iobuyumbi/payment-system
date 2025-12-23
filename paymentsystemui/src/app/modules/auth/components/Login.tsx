@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import * as Yup from 'yup'
 import clsx from 'clsx'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 // import {getUserByToken, login} from '../core/_requests'
 import { toAbsoluteUrl } from '../../../../_metronic/helpers'
@@ -13,9 +13,9 @@ import AuthService from '../../../../services/AuthService';
 import { getUserByToken, login } from '../core/_requests'
 import { AUTH_LOCAL_STORAGE_KEY } from '../core/AuthHelpers'
 import PermissionService from '../../../../services/PermissionService'
+import { setSelectedCountryCode } from '../../../../_metronic/helpers/AppUtil'
 import FormErrorAlert from '../../../../_shared/FormErrorAlert/Index'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
-import { set } from 'lodash'
 
 const permissionService = new PermissionService();
 
@@ -46,6 +46,7 @@ const initialValues = {
 const authService = new AuthService();
 
 export function Login() {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const { saveAuth, setCurrentUser } = useAuth()
   const [errors, setErrors] = useState<any>([]);
@@ -119,25 +120,75 @@ export function Login() {
   const handleOtpChange = async () => {
     var data = {
       otp: otp,
-      userId: userData.id
+      userId: userData?.userId ?? userData?.id
     }
     setLoading(true)
-    let result = await authService.postOTP(data);
-    debugger
-    if (true)
-      {
-         saveAuth(userData) 
-          const { data: user } = await getUserByToken(userData.api_token)
-          setCurrentUser(user)
-          updatePermissionsForCountry();
-      }
-      else {
-          setLoading(false)
-
-          saveAuth(undefined)
-          setErrors(["Invalid OTP"])
+    setErrors([])
+    try {
+      let result = await authService.postOTP(data);
+      console.log('[OTP] verify-otp response:', result);
+      const succeeded = (result as any)?.succeeded ?? (result as any)?.Succeeded;
+      const otpResult = (result as any)?.result ?? (result as any)?.Result;
+      const isValid = Boolean(succeeded) && otpResult === true;
+      
+      if (isValid) {
+        // Save auth data first
+        saveAuth(userData) 
+        
+        // Set the selected country code from the login response
+        if (userData && userData.countries && userData.countries.length > 0) {
+          const firstCountryCode = userData.countries[0].code;
+          setSelectedCountryCode(firstCountryCode);
         }
+        
+        // Try to get user data with permissions, but don't fail if it errors
+        try {
+          const { data: user } = await getUserByToken(userData.api_token)
+          if (user) {
+            setCurrentUser(user)
+            // Update auth with permissions if available
+            const stored = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              const permissions = (user as any).permissions;
+              if (permissions) {
+                parsed.permissions = permissions;
+                localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, JSON.stringify(parsed));
+              }
+            }
+          }
+        } catch (tokenError: any) {
+          // Continue - we'll get permissions separately
+        }
+        
+        // Get permissions separately if not already set
+        try {
+          const stored = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (!parsed.permissions || parsed.permissions.length === 0) {
+              let per = await permissionService.GetPermissions(parsed.username || userData.username);
+              if (per && Array.isArray(per)) {
+                parsed.permissions = per;
+                localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, JSON.stringify(parsed));
+              }
+            }
+          }
+        } catch (permError) {
+          // Continue anyway - user can still login
+        }
+        
+        // Navigate to dashboard instead of reloading
+        navigate('/');
+      } else {
+        setErrors(result?.errors || result?.Errors || ["Invalid OTP"]);
         setLoading(false);
+      }
+    } catch (error: any) {
+      console.error("OTP verification failed:", error);
+      setErrors(error.response?.data?.Errors || ["OTP verification failed."]);
+      setLoading(false);
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);

@@ -2,9 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Solidaridad.Core.Entities;
+using Microsoft.Extensions.Logging;
+using Npgsql;
+using Solidaridad.Core.Enums;
 using Solidaridad.DataAccess.Identity;
 using Solidaridad.DataAccess.Persistence;
+using Solidaridad.DataAccess.Persistence.Seeding.Permission;
 using Solidaridad.DataAccess.Repositories;
 using Solidaridad.DataAccess.Repositories.Impl;
 
@@ -22,6 +25,7 @@ public static class DataAccessDependencyInjection
 
         return services;
     }
+
 
     private static void AddRepositories(this IServiceCollection services)
     {
@@ -96,10 +100,13 @@ public static class DataAccessDependencyInjection
 
     private static void AddIdentity(this IServiceCollection services)
     {
-
-        services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        var identityBuilder = services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<DatabaseContext>();
+
+        // Add token providers
+        identityBuilder.AddTokenProvider(TokenOptions.DefaultEmailProvider, typeof(EmailTokenProvider<ApplicationUser>));
+        identityBuilder.AddTokenProvider(TokenOptions.DefaultPhoneProvider, typeof(PhoneNumberTokenProvider<ApplicationUser>));
 
         services.AddTransient<IUserTwoFactorTokenProvider<ApplicationUser>, PhoneNumberTokenProvider<ApplicationUser>>();
         services.AddTransient<IUserTwoFactorTokenProvider<ApplicationUser>, EmailTokenProvider<ApplicationUser>>();

@@ -9,6 +9,9 @@ public static class Permissions
             // Dashboard
             "dashboard.view",
             "dashboard.viewactivitylog",
+            "dashboard.viewcounters",
+            "dashboard.viewgettingstarted",
+            "dashboard.viewpaymentbatchesgraph",
             
             // Farmers
             "farmers.view",

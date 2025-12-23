@@ -42,6 +42,7 @@ public static class DatabaseContextSeed
                 Code = "KE",   // ISO 3166-1 alpha-2
                 CurrencyName = "Kenyan Shilling",
                 CurrencyPrefix = "KES",
+                CurrencySuffix = "", // Set empty string to satisfy not-null constraint
                 IsActive = true
             });
             await context.SaveChangesAsync();

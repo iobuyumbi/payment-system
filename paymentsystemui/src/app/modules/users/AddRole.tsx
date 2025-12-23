@@ -72,7 +72,6 @@ const AddRoles: FC = () => {
           const transformedCountryIds = values.country.map((p: any) => p.value);
           values.countryIds = transformedCountryIds;
           const result = await roleService.saveRole(values);
-          debugger
           if (result && result[0].succeeded === true) {
             navigate("/account-settings/roles");
             toastNotify(toastId, "Success");

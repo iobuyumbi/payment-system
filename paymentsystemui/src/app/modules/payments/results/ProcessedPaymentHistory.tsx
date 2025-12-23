@@ -126,7 +126,6 @@ complete → "Completed Successfully"
 error → "Failed - Error Encountered"
 
 aborted → "Cancelled" */}
-debugger;
     const completed = response.filter((item) => item.paymentStatus === "271d9c1a-2c4f-4ee2-ad0f-d7dc36bd255f");
     const pending = response.filter((item) => item.paymentStatus === "d8a75d19-0b59-4ba0-95a4-f800e48da2c9");
     const active = response.filter((item) => item.paymentStatus === "3e3ff24a-9dd9-443c-a09c-d9c96dc36927"

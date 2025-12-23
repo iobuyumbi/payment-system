@@ -466,7 +466,6 @@ export function AddFarmer() {
   }, [formik.values.adminLevel2Id]);
 
   useEffect(() => {
-    debugger
     if (countries && countries.length > 0) {
       const countryCode = getSelectedCountryCode();
       const selectedCountry = countries.find((c: any) => c.code === countryCode);

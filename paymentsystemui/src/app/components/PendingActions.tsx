@@ -225,7 +225,6 @@ export default function PendingActions() {
   };
 
   const notifications = rowData?.flatMap((item: any) => {
-    debugger
       if (item?.createdBy === currentUserId) return [];
     const stage = item.status.stageText as StageKey;
     const roles: RoleKey[] = ["initiator", "reviewer", "approver"];

@@ -11,9 +11,11 @@ export default class PaymentBatchService extends BaseService {
 
     if (response && this.isSuccessResponse(response)) {
       if (response.data) {
-        const data: any = response.data.data;
-        if (data && data.result) {
-          return data.result as any[];
+        const paged: any = (response.data as any).data;
+        const pagedResult: any = paged?.result ?? paged?.Result;
+        const batchesContainer: any = pagedResult?.paymentBatchResponseModel ?? pagedResult?.PaymentBatchResponseModel;
+        if (Array.isArray(batchesContainer)) {
+          return batchesContainer;
         }
       }
     }
@@ -22,7 +24,6 @@ export default class PaymentBatchService extends BaseService {
 
  getPaymentBatchPagedData = async (data: any): Promise<any | null> => {
     const response = await this.post(this.getURL("api/PaymentBatch/Search"), data);
-debugger
     if (response && this.isSuccessResponse(response)) {
       if (response.data) {
         const data: any = response.data.data;

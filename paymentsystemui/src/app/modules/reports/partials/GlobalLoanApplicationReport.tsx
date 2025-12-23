@@ -133,7 +133,6 @@ const GlobalLoanApplicationReport: React.FC<ReportProps> = ({ title, reportData 
     try {
       const response = await reportsService.getGlobalLoanApplicationReports(props);
       console.log("Application report response", response);
-debugger;
       if (response) {
         setRowData(response);
       } else {
@@ -149,7 +148,6 @@ debugger;
   const exportExcel = async () => {
     const workbook = XLSX.utils.book_new();
     let hasData = false;
-debugger
    
       
       const sheetName = "Loan Application Report";

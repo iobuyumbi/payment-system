@@ -220,7 +220,6 @@ getApplicationReports = async (props : any): Promise<any | []> => {
         props
       );
 
-debugger
       if (response && this.isSuccessResponse(response)) {
         if (response.data) {
           const data: any = response.data;
@@ -244,7 +243,6 @@ debugger
         props
       );
 
-debugger
       if (response && this.isSuccessResponse(response)) {
         if (response.data) {
           const data: any = response.data;
@@ -270,7 +268,6 @@ debugger
         props
       );
 
-debugger
       if (response && this.isSuccessResponse(response)) {
         if (response.data) {
           const data: any = response.data;
@@ -315,8 +312,6 @@ debugger
   getPaymentReports = async (props : any): Promise<any | []> => {
     try { 
 
-      debugger
-      
       const response = await this.post(
         this.getURL(`api/reports/GetPaymentReports`),
         props

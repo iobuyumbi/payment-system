@@ -210,7 +210,6 @@ const PaymentBatchSummary = () => {
           },
           error: {
             render({ data: err }) {
-              debugger;
               const error = err as {
                 response?: { data?: { message?: string } };
               };
@@ -253,7 +252,6 @@ const PaymentBatchSummary = () => {
     await toast.promise(
       (async () => {
         setLoading(true);
-        debugger;
         const response = await axios.post(
           `${getAPIBaseUrl()}api/Reports/GetPaymentReportsPdf`,
           data,

@@ -49,7 +49,6 @@ getLocations = async (data: any): Promise<any[]> => {
 
   getById = async (id: any): Promise<any> => {
   const response = await this.get(this.getURL(`api/LocationProfiles/${id}`), );
-debugger
   if (response && this.isSuccessResponse(response)) {
     const responseData = response.data;
     if (responseData && responseData.succeeded) {

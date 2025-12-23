@@ -255,7 +255,6 @@ export const ListFarmers: React.FC = (props: any) => {
         pageSize: pageSize,
       };
       const response = await farmerService.getFarmerPagedData(searchParams);
-      debugger;
       const data = await response.result;
 
       // Perform the data transformation here 

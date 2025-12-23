@@ -95,7 +95,6 @@ const ListApplications = (props: any) => {
   };
 
   const MainLinkActionComponent = (props: any) => {
-    debugger
     return <button className="btn btn-default link-primary mx-0 px-1" onClick={() => linkButtonHandler(props.data)}>
       {props.data.loanNumber}
     </button>;
