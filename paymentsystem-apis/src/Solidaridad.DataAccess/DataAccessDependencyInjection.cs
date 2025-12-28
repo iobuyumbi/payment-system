@@ -105,6 +105,7 @@ public static class DataAccessDependencyInjection
             .AddEntityFrameworkStores<DatabaseContext>();
 
         // Add token providers
+        identityBuilder.AddTokenProvider(TokenOptions.DefaultProvider, typeof(DataProtectorTokenProvider<ApplicationUser>));
         identityBuilder.AddTokenProvider(TokenOptions.DefaultEmailProvider, typeof(EmailTokenProvider<ApplicationUser>));
         identityBuilder.AddTokenProvider(TokenOptions.DefaultPhoneProvider, typeof(PhoneNumberTokenProvider<ApplicationUser>));
 

@@ -132,28 +132,36 @@ public class UserRepository : BaseRepository<User>, IUserRepository
 
     public async Task<bool> VerifyOtpAsync(string userId, string enteredOtp)
     {
-        string otpHash = HashOtp(enteredOtp);
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(enteredOtp)) return false;
 
-        var otpRecord = await userOtpSet
-            .Where(o => o.UserId == userId && !o.IsUsed && o.ExpiresAt > DateTime.UtcNow)
+        var normalizedUserId = userId.Trim();
+        var normalizedOtp = enteredOtp.Trim();
+        var otpHash = HashOtp(normalizedOtp);
+
+        var activeOtps = await userOtpSet
+            .Where(o => o.UserId == normalizedUserId && !o.IsUsed && o.ExpiresAt > DateTime.UtcNow)
             .OrderByDescending(o => o.CreatedAt)
-            .FirstOrDefaultAsync();
+            .Take(10)
+            .ToListAsync();
 
-        if (otpRecord == null) return false;
+        if (activeOtps.Count == 0) return false;
 
-        // Retry limit
-        otpRecord.AttemptCount++;
-        if (otpRecord.AttemptCount > 3)
+        // Accept any active OTP for the user (helps when multiple OTPs were generated and the user enters an earlier one)
+        var matchingRecord = activeOtps.FirstOrDefault(o => o.OtpHash == otpHash);
+        if (matchingRecord != null)
+        {
+            matchingRecord.IsUsed = true;
+            await Context.SaveChangesAsync();
+            return true;
+        }
+
+        // Retry limit is tracked on the latest OTP record
+        var latestRecord = activeOtps[0];
+        latestRecord.AttemptCount++;
+        if (latestRecord.AttemptCount > 3)
         {
             await Context.SaveChangesAsync();
             return false;
-        }
-
-        if (otpRecord.OtpHash == otpHash)
-        {
-            otpRecord.IsUsed = true;
-            await Context.SaveChangesAsync();
-            return true;
         }
 
         await Context.SaveChangesAsync();

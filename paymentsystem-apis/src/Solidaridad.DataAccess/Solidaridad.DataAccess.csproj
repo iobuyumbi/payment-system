@@ -32,6 +32,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Solidaridad.Core\Solidaridad.Core.csproj" />
       <ProjectReference Include="..\Solidaridad.Shared\Solidaridad.Shared.csproj" />
     </ItemGroup>
